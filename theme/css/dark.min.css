@@ -1,0 +1,73 @@
+body {
+  background-color: #102423;
+  color: #d8d8d8;
+}
+hr {
+  background-color: #102423;
+  color: #102423;
+}
+aside {
+  background-color: #102423;
+  color: #c8c8c8;
+}
+aside form.navbar-search input#tipue_search_input {
+  background-color: #1a1a1a;
+  color: #d8d8d8;
+}
+main nav {
+  border-bottom-color: #102423;
+}
+main nav a,
+main .translations a {
+  border-color: #102423;
+}
+main article kbd {
+  background-color: #080808;
+  color: #d8d8d8;
+}
+main article blockquote,
+main article pre {
+  border-left: 8px solid #ffffff33;
+}
+main article div#tipue_search_content .tipue_search_result span.tipue_search_content_bold {
+  color: white;
+}
+main article section#isso-thread div.textarea,
+main article section#isso-thread .auth-section p.input-wrapper input,
+main article section#isso-thread .notification-section input {
+  background: #1a1a1a;
+  color: #d8d8d8;
+}
+main article section#isso-thread > h4 {
+  color: #d8d8d8;
+}
+main article section#isso-thread .isso-postbox > .form-wrapper .preview {
+  background: repeating-linear-gradient(-45deg, #102423, #102423 10px, #1a1a1a 10px, #1a1a1a 20px);
+}
+main article section#isso-thread .isso-comment > div.text-wrapper > .isso-comment-header .author {
+  color: #d8d8d8;
+}
+main article section#isso-thread .isso-comment > div.text-wrapper > .isso-comment-header .spacer,
+main article section#isso-thread .isso-comment > div.text-wrapper > .isso-comment-header a.permalink,
+main article section#isso-thread .isso-comment > div.text-wrapper > .isso-comment-header .note,
+main article section#isso-thread .isso-comment > div.text-wrapper > .isso-comment-header a.parent {
+  color: #888888;
+}
+main article section#isso-thread .isso-comment > div.text-wrapper > .isso-comment-header .spacer:hover,
+main article section#isso-thread .isso-comment > div.text-wrapper > .isso-comment-header a.permalink:hover,
+main article section#isso-thread .isso-comment > div.text-wrapper > .isso-comment-header .note:hover,
+main article section#isso-thread .isso-comment > div.text-wrapper > .isso-comment-header a.parent:hover {
+  color: #d8d8d8;
+}
+main article section#isso-thread .isso-comment > div.text-wrapper > .isso-comment-footer a:hover {
+  text-shadow: #242121 0 0 1px !important;
+}
+main footer {
+  border-top-color: #102423;
+}
+div.related-posts {
+  border-color: #102423;
+}
+div.figure {
+  color: #bfbfbf;
+}
