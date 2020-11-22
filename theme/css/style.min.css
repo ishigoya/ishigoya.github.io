@@ -18,7 +18,7 @@ a {
   font-weight: bolder;
 }
 a:link {
-  color: #5C6967;
+  color: #3D827E;
 }
 a:visited {
   color: #5C6967;
@@ -49,6 +49,7 @@ aside a {
   border-bottom: none;
 }
 aside a:link {
+  color: #c8c8c8;
   border-bottom: none;
 }
 aside a:visited {
@@ -367,7 +368,7 @@ ul.list li {
     flex: 5 1 0;
   }
   main article {
-    width: 70ch;
+    width: 65ch;
     margin: 0 auto 2% auto;
   }
   main article.single {
