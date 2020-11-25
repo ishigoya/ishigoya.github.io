@@ -29,7 +29,7 @@ a:hover {
 body {
   margin: 0;
   padding: 0;
-  background-color: #d8d8d8;
+  background-color: #c8c8c8;
   color: #242121;
   font-family: 'Source Sans Pro', 'Roboto', 'Open Sans', 'Liberation Sans', 'DejaVu Sans', 'Verdana', 'Helvetica', 'Arial', sans-serif;
   font-size: 1em;
@@ -39,7 +39,7 @@ img {
   max-width: 100%;
 }
 aside {
-  background-color: #102423;
+  background-color: #101e1d;
   color: #c8c8c8;
   text-align: center;
 }
@@ -85,14 +85,14 @@ main nav {
   text-align: center;
   text-transform: uppercase;
   padding: 14px 0 14px 0;
-  border-bottom: #d8d8d8 1px solid;
+  border-bottom: #c8c8c8 1px solid;
   font-size: 0;
 }
 main nav a,
 main .translations a {
   font-size: 12px;
   padding: 0 4px;
-  border-right: #d8d8d8 1px solid;
+  border-right: #c8c8c8 1px solid;
 }
 main nav :last-child,
 main .translations :last-child {
@@ -119,19 +119,19 @@ main div p {
   line-height: 1.65rem;
 }
 main div p a {
-  color: #d8d8d8;
+  color: #c8c8c8;
   font-weight: normal;
 }
 main div p a:link {
-  color: #d8d8d8;
+  color: #c8c8c8;
   border-bottom: 2px solid #3D827E;
 }
 main div p a:visited {
-  color: #d8d8d8;
+  color: #c8c8c8;
   border-bottom: 2px solid #5C6967;
 }
 main div p a:hover {
-  color: #d8d8d8;
+  color: #c8c8c8;
   border-bottom: 2px solid #AC7052;
 }
 main header h1,
@@ -140,7 +140,12 @@ main header h2 {
 }
 main header h1 a:visited,
 main header h2 a:visited {
-  color: #d8d8d8;
+  color: #c8c8c8;
+  border-bottom: none;
+}
+main header h1 a:hover,
+main header h2 a:hover {
+  color: #AC7052;
   border-bottom: none;
 }
 main header p {
@@ -237,7 +242,7 @@ main table.highlighttable td.linenos pre {
 main footer {
   padding-top: 4px;
   padding-bottom: 4px;
-  border-top: #d8d8d8 1px solid;
+  border-top: #c8c8c8 1px solid;
   flex: 0 0 auto;
 }
 main footer p {
@@ -258,7 +263,7 @@ main footer span.footer-separator {
   padding: 0.2em 0.6em 0.2em;
   font-size: 0.74rem;
   line-height: 1;
-  color: #d8d8d8;
+  color: #c8c8c8;
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
@@ -273,7 +278,7 @@ section#isso-thread section.auth-section p.post-action input {
   padding: 0.6em 0.6em;
   font-size: 0.8em;
   line-height: 1;
-  color: #d8d8d8;
+  color: #c8c8c8;
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
@@ -306,8 +311,8 @@ a.btn:hover {
 div.related-posts {
   margin: 15px 0 15px 0;
   padding-bottom: 20px;
-  border-top: #d8d8d8 1px solid;
-  border-bottom: #d8d8d8 1px solid;
+  border-top: #c8c8c8 1px solid;
+  border-bottom: #c8c8c8 1px solid;
 }
 div.related-posts h4 {
   margin: 20px 0 25px 0;
