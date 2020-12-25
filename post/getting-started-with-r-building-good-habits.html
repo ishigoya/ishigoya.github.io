@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="" />
+
+  <link rel="stylesheet" href="https://ishigoya.com/css/style.min.css?c69ddc93">
+  <link rel="stylesheet" href="https://ishigoya.com/css/dark.min.css?3ad0247a">
+
+
+  
+
+
+
+
+
+
+<meta name="author" content="Rob" />
+<meta name="description" content="I recently had to start using R for a couple of university courses. Everyone had to write their projects in Rmarkdown, and submit them in both PDF and Rmarkdown format. The past few weeks have been a bit of a blur. I&#39;m also enrolled for an introductory course in R …" />
+<meta name="keywords" content="">
+
+
+<meta property="og:site_name" content="ishigoya"/>
+<meta property="og:title" content="Getting Started with R - Building Good Habits"/>
+<meta property="og:description" content="I recently had to start using R for a couple of university courses. Everyone had to write their projects in Rmarkdown, and submit them in both PDF and Rmarkdown format. The past few weeks have been a bit of a blur. I&#39;m also enrolled for an introductory course in R …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://ishigoya.com/post/getting-started-with-r-building-good-habits"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2020-12-23 22:28:13+09:00"/>
+<meta property="article:modified_time" content="2020-12-25 18:24:25+09:00"/>
+<meta property="article:author" content="https://ishigoya.com/author/rob.html">
+<meta property="article:section" content="programming"/>
+<meta property="og:image" content="">
+
+  <title>ishigoya &ndash; Getting Started with R - Building Good Habits</title>
+
+</head>
+<body class="dark-theme">
+  <aside>
+    <div>
+
+      <h1>
+        <a href="https://ishigoya.com">Rob's Blog</a>
+      </h1>
+
+
+
+      <nav>
+        <ul class="list">
+
+
+              <li>
+                <a target="_self"
+                   href="https://ishigoya.com/about">
+                  About
+                </a>
+              </li>
+
+            <li>
+              <a target="_self" href="/categories" >categories</a>
+            </li>
+        </ul>
+      </nav>
+
+    </div>
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1>Getting Started with R - Building Good Habits</h1>
+    <p>
+      Posted in December 2020 to <a href="https://ishigoya.com/category/programming">programming</a>
+    </p>
+  </header>
+
+
+  <div>
+    <p>I recently had to start using R for a couple of university courses. Everyone had to write their projects in Rmarkdown, and submit them in both PDF and Rmarkdown format. The past few weeks have been a bit of a blur. I'm also enrolled for an introductory course in R, but being more used to just searching for things when I have a problem, I haven't been paying so much attention to the lessons for that course. So when I had to actually write the code for these projects, then it was Google time! And since then it's been a crazy mess of different libraries, dodging R's quirks, and just trying to get things to work the way I want them to. I finally submitted the last main project the other day, so now I'm free to do a bit of amateur forensics on the code I wrote.</p>
+<p>In this post, I'd like to document some of the tricks I learnt, or things that I think went particularly well, so that I can use them again in future.</p>
+<h3>R Environment</h3>
+<p>This was a major struggle. First off, my laptop has 64-bit libraries only, and it took me a long time to realise that that was causing some package installs to fail. I'd already given up using R on my laptop when I found this, but I think this is the solution:</p>
+<div class="highlight"><pre><span></span><code><span class="err">install.packages(&quot;&lt;package&gt;&quot;, INSTALL_opts = &quot;--no-multiarch&quot;)</span>
+</code></pre></div>
+
+<p>My next stop was Jupyter, but I had trouble running inline R code in my Rmarkdown documents, so I eventually gave up on that too. I was hesitant to install Rstudio on my laptop, but then I discovered that a server-based version is available, so I chose that. I had no trouble installing it in a Ubuntu LXC container.</p>
+<p>I'm still not entirely clear on the demarcation between workspaces, projects and environments, but creating a project and linking it to git gave me a git repo whose root folder name was the project name, so that part wasn't too complicated. This was handy for SSHing in to resolve merge conflicts or do other non-trivial git stuff. Speaking of which, this entry from my <code>~/.ssh/config</code> shows my trick for SSHing into individual LXC containers via the host:</p>
+<div class="highlight"><pre><span></span><code><span class="err">Host rstudio</span>
+<span class="err">    IdentityFile ~/.ssh/&lt;key file&gt;</span>
+<span class="err">    ProxyCommand ssh -T -A &lt;server&gt; lxc exec %h -- /usr/sbin/sshd -i</span>
+</code></pre></div>
+
+<p>The next issue arose from working with other people. If I put Linux-specific settings like <code>latex_engine: xelatex</code> in the YAML metadata, then other people on the team couldn't knit my file. To get around this, I added the .Rproj file to the gitignore, and removed OS-specific settings from the YAML metadata. This way, where necessary we could each use our own settings for knitting the files. This was the .gitignore file we ended up with:</p>
+<div class="highlight"><pre><span></span><code><span class="nf">_snaps</span><span class="err">/</span><span class="p">*</span>
+<span class="na">.Rproj.user</span>
+<span class="na">.Rhistory</span>
+<span class="na">.RData</span>
+<span class="na">.Ruserdata</span>
+<span class="err">*</span><span class="na">.log</span>
+
+<span class="err">*</span><span class="na">.swp</span>
+<span class="err">*</span><span class="na">.Rproj</span>
+
+<span class="err">*</span><span class="na">.pdf</span>
+<span class="err">*</span><span class="na">.pptx</span>
+</code></pre></div>
+
+<p>With that out of the way, it was time to write some actual code!</p>
+<h3>Coding</h3>
+<h4>Libraries</h4>
+<p>I don't know if this is an R thing or a me thing, but I had major issues with namespaces in R. The order that you load libraries seems to make a difference. I think the one I had an issue with was dplyr, which has to be loaded <strong>after</strong> other packages with identically-named functions. </p>
+<h4>YAML Metadata</h4>
+<p>These settings worked for me:</p>
+<div class="highlight"><pre><span></span><code><span class="n">header</span><span class="o">-</span><span class="nl">includes</span><span class="p">:</span><span class="w"></span>
+<span class="o">-</span><span class="w"> </span><span class="err">\</span><span class="n">usepackage</span><span class="err">{</span><span class="n">amsmath</span><span class="err">}</span><span class="w"></span>
+<span class="o">-</span><span class="w"> </span><span class="err">\</span><span class="n">usepackage</span><span class="o">[</span><span class="n">utf8</span><span class="o">]</span><span class="err">{</span><span class="n">inputenc</span><span class="err">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>Also, we had to submit our presentations with font size 11, 1.5-line spacing. In Latex-speak, that line spacing translates to:</p>
+<div class="highlight"><pre><span></span><code><span class="c">header-includes:</span>
+<span class="err">- \linespread{1.25}</span>
+</code></pre></div>
+
+<h4>Other Top-of-File Stuff</h4>
+<p>In writing a project, you might have to set a seed. Because this is just a number, it seems a bit arbitrary (which I guess it is, but ho hum). However, if you load the <code>gtools</code> library, you can do this instead:</p>
+<div class="highlight"><pre><span></span><code><span class="err">set.seed(sum(asc(&quot;Rocking the custom seed text!&quot;)))</span>
+</code></pre></div>
+
+<p>Another thing to include at the outset is colour scheme data. I actually used different methods for setting colour schemes between the two projects I worked on. One was RColorBrewer, and the other was just plain colours in R.</p>
+<p>The RColorBrewer way:</p>
+<div class="highlight"><pre><span></span><code><span class="nf">library</span><span class="p">(</span><span class="n">RcolorBrewer</span><span class="p">)</span>
+
+<span class="kc">...</span>
+
+<span class="n">twocolor</span> <span class="o">&lt;-</span> <span class="nf">brewer.pal</span><span class="p">(</span><span class="m">8</span><span class="p">,</span> <span class="s">&quot;Dark1&quot;</span><span class="p">)[</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">]</span>
+<span class="n">threecolor</span> <span class="o">&lt;-</span> <span class="nf">brewer.pal</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="s">&quot;Dark1&quot;</span><span class="p">)</span><span class="n">A</span>
+
+<span class="n">ggplot</span> <span class="o">+</span> 
+<span class="kc">...</span> <span class="o">+</span> 
+  <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span> <span class="o">=</span> <span class="n">twocolor</span><span class="p">)</span>
+</code></pre></div>
+
+<p>One issue I had with this was that I wanted to set transparency. I found <a href="https://rdrr.io/cran/GISTools/man/add.alpha.html">this</a>, but installing the underlying GISTools stopped my teammate's R from running, so we had to abandon it.</p>
+<p>The plain R way:</p>
+<div class="highlight"><pre><span></span><code><span class="n">acolor</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;A&quot;</span> <span class="o">=</span> <span class="s">&quot;lightblue&quot;</span><span class="p">,</span> <span class="s">&quot;B&quot;</span> <span class="o">=</span> <span class="s">&quot;orange&quot;</span><span class="p">)</span>
+
+<span class="n">gplot</span> <span class="o">+</span> 
+<span class="kc">...</span> <span class="o">+</span>
+  <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span> <span class="o">=</span> <span class="n">acolor</span><span class="p">)</span>
+</code></pre></div>
+
+<p>I didn't attempt to add transparency here. It looks like it wouldn't be easy.</p>
+<h4>Testing</h4>
+<p>In the projects I contributed to, I divided tests into two types: one using the <code>testthat</code> package, and another that I'll explain later. The <code>testthat</code> package provides a really convenient way of testing code. I used it after making changes to a data object, such as casting a vector as a different type, or doing calculations. It provides a way of making sure you haven't accidentally broken your data. This could involve checking row or column counts:</p>
+<div class="highlight"><pre><span></span><code><span class="err">test_that(&quot;no change in data frame dimensions&quot;, {</span>
+<span class="err">    expect_equal(nrow(st), 200)</span>
+<span class="err">    expect_equal(ncol(st), 15)})</span>
+</code></pre></div>
+
+<p>checking that factors have been applied correctly:</p>
+<div class="highlight"><pre><span></span><code><span class="err">test_that(&quot;no change after casting as factors&quot;, {</span>
+<span class="err">    expect_true(sum(st[st$dominant_hand == &quot;left&quot;,]) &lt;</span>
+<span class="err">                    sum(st[st$dominant_hand == &quot;right&quot;,]))})</span>
+</code></pre></div>
+
+<p>or doing checks against a single data point:</p>
+<div class="highlight"><pre><span></span><code><span class="err">test_that(&quot;bmi group matches height and weight&quot;, {</span>
+<span class="err">    # id == 204</span>
+<span class="err">    # height      weight</span>
+<span class="err">    #     81         175 --&gt; BMI = 26</span>
+<span class="err">    expect_equal(toString(st[st$id == 204,]$bmigroup), &quot;overweight&quot;)})</span>
+</code></pre></div>
+
+<p>Where the original data was loaded as a data frame, I did the initial data cleaning, did tests to confirm no change, and then deleted the original object.</p>
+<h4>Inline R Code</h4>
+<p>One thing that seemed like a good best practice to me was using references to variables within text instead of numbers. I've worked on projects before where a small change in the data has resulted in a large-scale change of hard-coded numbers. I put a chunk of code before the paragraph with the numbers, defined a short variable I could refer to in the text, and then put something like <code>\</code>r qpc `` in the text.</p>
+<p>The other thing I put in the code chunk was a quick test - the second type of test that I was referring to above. For example, say we expected <code>qpc</code> to be a positive number. We could use the <code>stopifnot</code> command to write a quick test checking the value of <code>qpc</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="err">stopifnot(qpc &gt; 0)</span>
+</code></pre></div>
+
+<p>I matched these tests with any statements made in the code. If I wrote that two numbers were nearly equal, I would add a quick <code>stopifnot</code> test to confirm that they really were almost the same. This makes the document more resilient to change, and also provides another chance to spot errors.</p>
+<h4>Figures</h4>
+<p>The seams holding Latex, R and Rmarkdown together can sometimes be quite easy to spot, and it feels as if displaying images is one of those areas. I haven't figured out some of the details for displaying figures yet - for example, I haven't found a way to wrap text around an image - and it feels to me like these points are approaching the limit of what can be done by gluing these approaches together.</p>
+<p>One area that was quite easy to integrate was captions. Using the <code>captioner</code> package, it was relatively simple to add captions and reference them in the text (although for some reason, it broke whenever I tried to label something as a table). I needed the following commands to get it working:</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">YAML</span><span class="w"> </span><span class="n">markdown</span><span class="w"></span>
+<span class="n">header</span><span class="o">-</span><span class="nl">includes</span><span class="p">:</span><span class="w"></span>
+<span class="o">-</span><span class="w"> </span><span class="err">\</span><span class="n">usepackage</span><span class="err">{</span><span class="n">caption</span><span class="err">}</span><span class="w"></span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">outside</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">chunk</span><span class="w"></span>
+<span class="err">\</span><span class="n">captionsetup</span><span class="o">[</span><span class="n">table</span><span class="o">]</span><span class="err">{</span><span class="n">labelformat</span><span class="o">=</span><span class="n">empty</span><span class="err">}</span><span class="w"></span>
+<span class="err">\</span><span class="n">captionsetup</span><span class="o">[</span><span class="n">figure</span><span class="o">]</span><span class="err">{</span><span class="n">labelformat</span><span class="o">=</span><span class="n">empty</span><span class="err">}</span><span class="w"></span>
+
+<span class="err">#</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">chunks</span><span class="w"></span>
+<span class="n">library</span><span class="p">(</span><span class="n">stringr</span><span class="p">)</span><span class="w"></span>
+<span class="n">library</span><span class="p">(</span><span class="n">captioner</span><span class="p">)</span><span class="w"></span>
+
+<span class="n">fig_nums</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nl">captioner</span><span class="p">:</span><span class="err">:</span><span class="n">captioner</span><span class="p">(</span><span class="k">prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;Figure&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="n">f</span><span class="p">.</span><span class="k">ref</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">  </span><span class="nl">stringr</span><span class="p">:</span><span class="err">:</span><span class="n">str_extract</span><span class="p">(</span><span class="n">fig_nums</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="ss">&quot;[^:]*&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="err">}</span><span class="w"></span>
+<span class="n">ageblock</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">fig_nums</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;ageblock&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                     </span><span class="n">caption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;Charts characterising the age variable&quot;</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+
+<p>The opening part of the code chunk with the image is labelled as <code>r fig.cap = ageblock</code>. With these things in place, it is now possible to refer to the figure in the text, with <code>\</code>r f.ref('ageblock')``.</p>
+<p>Also on the topic of figure blocks, if you have two figures side by side, you can reduce the height of the figure block by setting <code>r fig.height = 2.3</code>. Of course, you might need to adjust it a bit to get the height right.</p>
+<h4>Other Latex Tricks</h4>
+<p>Because the code gets parsed by Latex at some point in it journey to PDF-dom, you can insert Latex commands and have them get picked up by Latex. For example, <code>\newpage</code> will give you a new page, or <code>$\hat\beta$</code> will give you a dapper estimate.</p>
+<h4>Other Minor Points</h4>
+<p>In a lot of the examples I found online, I saw people using the variable <code>df</code> for a data frame object. After a while, I realised that there already was a <code>df</code> function, and that this variable assignment is polluting the namespace. I'm guessing that <code>df</code> isn't a very popular function, otherwise people wouldnt do this, but this was a minor bugbear for me. I also followed the example set by <a href="http://adv-r.had.co.nz/Style.html">this style guide</a> and kept my variables lowercase. </p>
+<h4>Other Useful Libraries</h4>
+<ul>
+<li>hash - this library lets you create objects that behave a bit like a Python dict. </li>
+<li>ggResidpanel - good for making residual plots in a hurry</li>
+<li>cowplot - <code>plot_grid</code> is really useful for putting several graphs together</li>
+</ul>
+<h3>Things I wasn't able to do</h3>
+<p>When I first found out about being able to add units to numeric variables, I was very excited. You can actually do calculations involving units, and it'll give the correct unit with the answer. Amazing!</p>
+<p>Well, yes and no. Unfortunately, I couldn't use it for very long before hitting an issue. Namely, being <a href="https://github.com/r-quantities/units/issues/186">unable to get a summary of a linear regression using vectors with units</a>. That issue is almost two years old, so it seems unlikely the package will be useable with linear regression any time soon.</p>
+<p>Another thing that I couldn't find a solution to was saving my data in plain text. You can use <code>save</code> to store an object as an RData file, but if you are at all obsessive about wanting to store only plain text in your git repo, then this may be a source of problems for you. I tried to export a data frame as a CSV, but of course, vector metadata was not saved, so for example, my ordered factor stopped being ordered. Very troubling indeed.</p>
+<p>A final niggle that I mentioned above was being unable to easily add transparency to the definitions of colour schemes.</p>
+<h3>The End</h3>
+<p>Or rather, the beginning ...?</p>
+<p>This has been an attempt to make sense of my frantic first few weeks learning R. If you're future me, or even if you're not, I hope you've found something of use to you in here!</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+    </p>
+  </div>
+
+
+
+
+
+</article>
+
+    <footer>
+<p>
+Except where otherwise noted, content on this site is licensed under a <a href=https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0 license</a>.<br /> Built with <a href="http://getpelican.com" target="_blank">Pelican</a>. Theme based on <a href="http://bit.ly/flex-pelican" target="_blank">Flex</a>.
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " ishigoya ",
+  "url" : "https://ishigoya.com",
+  "image": "",
+  "description": ""
+}
+</script>
+
+
+</body>
+</html>
