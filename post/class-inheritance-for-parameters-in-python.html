@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="" />
+
+  <link rel="stylesheet" href="https://ishigoya.com/css/style.min.css?c69ddc93">
+  <link rel="stylesheet" href="https://ishigoya.com/css/dark.min.css?3ad0247a">
+
+
+  
+
+
+
+
+
+
+<meta name="author" content="Rob" />
+<meta name="description" content="It sometimes happens that I&#39;m doing something at work, hit an issue, and don&#39;t really have the functional reserve (in terms of time, motivation, or ... HP? MP?) to properly deal with it. My usual solution is to spend a few minutes doofing about with it to see if a quick …" />
+<meta name="keywords" content="">
+
+
+<meta property="og:site_name" content="ishigoya"/>
+<meta property="og:title" content="Class Inheritance for Parameters in Python"/>
+<meta property="og:description" content="It sometimes happens that I&#39;m doing something at work, hit an issue, and don&#39;t really have the functional reserve (in terms of time, motivation, or ... HP? MP?) to properly deal with it. My usual solution is to spend a few minutes doofing about with it to see if a quick …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://ishigoya.com/post/class-inheritance-for-parameters-in-python"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2020-12-26 10:32:05+09:00"/>
+<meta property="article:modified_time" content="2020-12-26 10:32:05+09:00"/>
+<meta property="article:author" content="https://ishigoya.com/author/rob.html">
+<meta property="article:section" content="programming"/>
+<meta property="og:image" content="">
+
+  <title>ishigoya &ndash; Class Inheritance for Parameters in Python</title>
+
+</head>
+<body class="dark-theme">
+  <aside>
+    <div>
+
+      <h1>
+        <a href="https://ishigoya.com">Rob's Blog</a>
+      </h1>
+
+
+
+      <nav>
+        <ul class="list">
+
+
+              <li>
+                <a target="_self"
+                   href="https://ishigoya.com/about">
+                  About
+                </a>
+              </li>
+
+            <li>
+              <a target="_self" href="/categories" >categories</a>
+            </li>
+        </ul>
+      </nav>
+
+    </div>
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1>Class Inheritance for Parameters in Python</h1>
+    <p>
+      Posted in December 2020 to <a href="https://ishigoya.com/category/programming">programming</a>
+    </p>
+  </header>
+
+
+  <div>
+    <p>It sometimes happens that I'm doing something at work, hit an issue, and don't really have the functional reserve (in terms of time, motivation, or ... HP? MP?) to properly deal with it. My usual solution is to spend a few minutes doofing about with it to see if a quick zero-effort fix will get the job done, and then come back to it later. Usually, these problems come about because of some fundamental misunderstanding of how something works, or is supposed to work, so reviewing these things when I have the time often results in an "aha!" moment, and sweet sweet resolution!</p>
+<p>The topic this time fits squarely into the above category. I've never done programming in a language that strictly enforced OOP, and I feel as if Python spoils me by giving me a way out: <em>"Hey, don't feel like doing any OOP today? It's OK, you don't have to!"</em> Well, this time there was no way out, so here I'll outline my original problem, how I tried to fudge a solution, and then show how it should be done.</p>
+<p>I had a module where a class and several subclasses of that class were defined. In my first version, none of the class definitions took any arguments, but I wanted to add parameters to the parent class and have them be inherited by the subclasses. For parent class <code>A</code>, which has keyword parameters <code>x</code> and <code>y</code>, I wanted to be able to create an instance of subclass <code>B</code> like this:</p>
+<div class="highlight"><pre><span></span><code><span class="n">vars</span> <span class="o">=</span> <span class="err">{</span><span class="ss">&quot;x&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="ss">&quot;y&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="err">}</span>
+
+<span class="n">obj</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="o">**</span><span class="n">vars</span><span class="p">)</span>
+</code></pre></div>
+
+<p>but it didn't work. Here's the full code of my first attempt:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># DOES NOT WORK</span>
+<span class="k">class</span> <span class="n">A:</span>
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, <span class="nb">x</span>=<span class="mi">1</span>, <span class="n">y</span>=<span class="mi">2</span>):
+        <span class="nb">self</span>.<span class="nb">x</span> = <span class="nb">x</span>
+        <span class="nb">self</span>.<span class="n">y</span> = <span class="n">y</span>
+
+    <span class="n">def</span> <span class="nb">sum</span>(<span class="nb">self</span>):
+        <span class="k">return</span> <span class="nb">self</span>.<span class="nb">x</span> + <span class="nb">self</span>.<span class="n">y</span>
+
+
+<span class="c1"># DOES NOT WORK</span>
+<span class="k">class</span> <span class="n">B</span>(<span class="n">A</span>):
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>):
+        <span class="n">super</span>().<span class="n">__init__</span>()
+
+
+<span class="n">obj</span> = <span class="n">B</span>(<span class="nb">x</span>=<span class="mi">3</span>, <span class="n">y</span>=<span class="mi">5</span>)
+
+<span class="c1"># TypeError: __init__() got an unexpected keyword argument &#39;x&#39;</span>
+</code></pre></div>
+
+<p>No good. I could see that the parameters needed to be handled by B, and knew that passing <code>self</code> around was involved somewhere, so I tried this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># DOES NOT WORK</span>
+<span class="k">class</span> <span class="n">A:</span>
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, <span class="nb">x</span>=<span class="mi">1</span>, <span class="n">y</span>=<span class="mi">2</span>):
+        <span class="nb">self</span>.<span class="nb">x</span> = <span class="nb">x</span>
+        <span class="nb">self</span>.<span class="n">y</span> = <span class="n">y</span>
+
+    <span class="n">def</span> <span class="nb">sum</span>(<span class="nb">self</span>):
+        <span class="k">return</span> <span class="nb">self</span>.<span class="nb">x</span> + <span class="nb">self</span>.<span class="n">y</span>
+
+
+<span class="c1"># DOES NOT WORK</span>
+<span class="k">class</span> <span class="n">B</span>(<span class="n">A</span>):
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, **<span class="n">kwargs</span>):
+        <span class="n">super</span>().<span class="n">__init__</span>(<span class="nb">self</span>, **<span class="n">kwargs</span>)
+
+
+<span class="n">obj</span> = <span class="n">B</span>(<span class="nb">x</span>=<span class="mi">3</span>, <span class="n">y</span>=<span class="mi">5</span>)
+
+<span class="c1"># TypeError: __init__() got multiple values for argument &#39;x&#39;</span>
+</code></pre></div>
+
+<p>After removing that <code>self</code> part, I found something that worked:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># WORKS!</span>
+<span class="k">class</span> <span class="n">A:</span>
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, <span class="nb">x</span>=<span class="mi">1</span>, <span class="n">y</span>=<span class="mi">2</span>):
+        <span class="nb">self</span>.<span class="nb">x</span> = <span class="nb">x</span>
+        <span class="nb">self</span>.<span class="n">y</span> = <span class="n">y</span>
+
+    <span class="n">def</span> <span class="nb">sum</span>(<span class="nb">self</span>):
+        <span class="k">return</span> <span class="nb">self</span>.<span class="nb">x</span> + <span class="nb">self</span>.<span class="n">y</span>
+
+
+<span class="k">class</span> <span class="n">B</span>(<span class="n">A</span>):
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, **<span class="n">kwargs</span>):
+        <span class="n">super</span>().<span class="n">__init__</span>(**<span class="n">kwargs</span>)
+
+
+<span class="n">obj</span> = <span class="n">B</span>(<span class="nb">x</span>=<span class="mi">3</span>, <span class="n">y</span>=<span class="mi">5</span>)
+<span class="n">obj</span>.<span class="nb">sum</span>()
+
+<span class="c1"># returns 8</span>
+</code></pre></div>
+
+<p>So the problem was throwing that <code>self</code> in there. As documented in the <a href="https://docs.python.org/3/library/functions.html#super">Python docs</a>, the code in the previous example does the same thing as:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ALSO WORKS!</span>
+<span class="k">class</span> <span class="n">A:</span>
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, <span class="nb">x</span>=<span class="mi">1</span>, <span class="n">y</span>=<span class="mi">2</span>):
+        <span class="nb">self</span>.<span class="nb">x</span> = <span class="nb">x</span>
+        <span class="nb">self</span>.<span class="n">y</span> = <span class="n">y</span>
+
+    <span class="n">def</span> <span class="nb">sum</span>(<span class="nb">self</span>):
+        <span class="k">return</span> <span class="nb">self</span>.<span class="nb">x</span> + <span class="nb">self</span>.<span class="n">y</span>
+
+
+<span class="k">class</span> <span class="n">B</span>(<span class="n">A</span>):
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, **<span class="n">kwargs</span>):
+        <span class="n">super</span>(<span class="n">B</span>, <span class="nb">self</span>).<span class="n">__init__</span>(**<span class="n">kwargs</span>)
+
+
+<span class="n">obj</span> = <span class="n">B</span>(<span class="nb">x</span>=<span class="mi">3</span>, <span class="n">y</span>=<span class="mi">5</span>)
+<span class="n">obj</span>.<span class="nb">sum</span>()
+
+<span class="c1"># returns 8</span>
+</code></pre></div>
+
+<p>Someday I'll do a deep dive into <code>super()</code> and MRO, and link to it from here, but for today I'm happy to have solved my problem. On a final note, another common pattern is where there are different parameters for the parent and child class. Here is an example that doesn't work:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># DOES NOT WORK</span>
+<span class="k">class</span> <span class="n">A:</span>
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, <span class="nb">x</span>=<span class="mi">1</span>, <span class="n">y</span>=<span class="mi">2</span>):
+        <span class="nb">self</span>.<span class="nb">x</span> = <span class="nb">x</span>
+        <span class="nb">self</span>.<span class="n">y</span> = <span class="n">y</span>
+
+    <span class="n">def</span> <span class="nb">sum</span>(<span class="nb">self</span>):
+        <span class="k">return</span> <span class="nb">self</span>.<span class="nb">x</span> + <span class="nb">self</span>.<span class="n">y</span>
+
+
+<span class="c1"># DOES NOT WORK</span>
+<span class="k">class</span> <span class="n">B</span>(<span class="n">A</span>):
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, **<span class="n">kwargs</span>, <span class="nb">z</span>=<span class="mi">3</span>):
+        <span class="nb">self</span>.<span class="nb">z</span> = <span class="nb">z</span>
+        <span class="n">super</span>(<span class="n">B</span>, <span class="nb">self</span>).<span class="n">__init__</span>(**<span class="n">kwargs</span>)
+
+
+<span class="c1">#     def __init__(self, **kwargs, z=3):</span>
+<span class="c1">#                                  ^</span>
+<span class="c1"># SyntaxError: invalid syntax</span>
+</code></pre></div>
+
+<p>Instead, you can remove the entry from the dict, as shown below. It's also possible to set the default value, for where the key isn't included: here it's set to 3.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># WORKS</span>
+<span class="k">class</span> <span class="n">A:</span>
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, <span class="nb">x</span>=<span class="mi">1</span>, <span class="n">y</span>=<span class="mi">2</span>):
+        <span class="nb">self</span>.<span class="nb">x</span> = <span class="nb">x</span>
+        <span class="nb">self</span>.<span class="n">y</span> = <span class="n">y</span>
+
+    <span class="n">def</span> <span class="nb">sum</span>(<span class="nb">self</span>):
+        <span class="k">return</span> <span class="nb">self</span>.<span class="nb">x</span> + <span class="nb">self</span>.<span class="n">y</span>
+
+
+<span class="k">class</span> <span class="n">B</span>(<span class="n">A</span>):
+    <span class="n">def</span> <span class="n">__init__</span>(<span class="nb">self</span>, **<span class="n">kwargs</span>):
+        <span class="nb">self</span>.<span class="nb">z</span> = <span class="n">kwargs</span>.<span class="nb">pop</span>(<span class="s">&quot;z&quot;</span>, <span class="mi">3</span>)
+        <span class="n">super</span>(<span class="n">B</span>, <span class="nb">self</span>).<span class="n">__init__</span>(**<span class="n">kwargs</span>)
+
+    <span class="n">def</span> <span class="n">get_z</span>(<span class="nb">self</span>):
+        <span class="k">return</span> <span class="nb">self</span>.<span class="nb">z</span>
+
+
+<span class="n">obj</span> = <span class="n">B</span>(<span class="nb">x</span>=<span class="mi">4</span>, <span class="n">y</span>=<span class="mi">3</span>)
+<span class="n">obj</span>.<span class="nb">sum</span>()
+
+<span class="c1"># returns 7</span>
+
+<span class="n">obj</span>.<span class="n">get_z</span>()
+
+<span class="c1"># returns 3</span>
+</code></pre></div>
+  </div>
+  <div class="tag-cloud">
+    <p>
+    </p>
+  </div>
+
+
+
+
+
+</article>
+
+    <footer>
+<p>
+Except where otherwise noted, content on this site is licensed under a <a href=https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0 license</a>.<br /> Built with <a href="http://getpelican.com" target="_blank">Pelican</a>. Theme based on <a href="http://bit.ly/flex-pelican" target="_blank">Flex</a>.
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " ishigoya ",
+  "url" : "https://ishigoya.com",
+  "image": "",
+  "description": ""
+}
+</script>
+
+
+</body>
+</html>
