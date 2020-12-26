@@ -1,13 +1,13 @@
 body {
-  background-color: #101e1d;
+  background-color: #102423;
   color: #c8c8c8;
 }
 hr {
-  background-color: #101e1d;
-  color: #101e1d;
+  background-color: #102423;
+  color: #102423;
 }
 aside {
-  background-color: #101e1d;
+  background-color: #102423;
   color: #c8c8c8;
 }
 aside form.navbar-search input#tipue_search_input {
@@ -15,11 +15,11 @@ aside form.navbar-search input#tipue_search_input {
   color: #c8c8c8;
 }
 main nav {
-  border-bottom-color: #101e1d;
+  border-bottom-color: #102423;
 }
 main nav a,
 main .translations a {
-  border-color: #101e1d;
+  border-color: #102423;
 }
 main article kbd {
   background-color: #080808;
@@ -42,7 +42,7 @@ main article section#isso-thread > h4 {
   color: #c8c8c8;
 }
 main article section#isso-thread .isso-postbox > .form-wrapper .preview {
-  background: repeating-linear-gradient(-45deg, #101e1d, #101e1d 10px, #1a1a1a 10px, #1a1a1a 20px);
+  background: repeating-linear-gradient(-45deg, #102423, #102423 10px, #1a1a1a 10px, #1a1a1a 20px);
 }
 main article section#isso-thread .isso-comment > div.text-wrapper > .isso-comment-header .author {
   color: #c8c8c8;
@@ -63,10 +63,10 @@ main article section#isso-thread .isso-comment > div.text-wrapper > .isso-commen
   text-shadow: #242121 0 0 1px !important;
 }
 main footer {
-  border-top-color: #101e1d;
+  border-top-color: #102423;
 }
 div.related-posts {
-  border-color: #101e1d;
+  border-color: #102423;
 }
 div.figure {
   color: #bfbfbf;
