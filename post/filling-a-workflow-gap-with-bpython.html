@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="" />
+
+  <link rel="stylesheet" href="https://ishigoya.com/css/style.min.css?5ba04073">
+  <link rel="stylesheet" href="https://ishigoya.com/css/dark.min.css?ee92d39b">
+
+
+  
+
+
+
+
+
+
+<meta name="author" content="Rob" />
+<meta name="description" content="I felt a bit disingenuous putting this article under the category of &#34;programming&#34;, as it&#39;s more a discussion of workflows used for programming than actual programming itself. However, can I really justify having an entire category for &#34;workflow&#34;? We shall see. This time, I&#39;d like to share my experience with …" />
+<meta name="keywords" content="">
+
+
+<meta property="og:site_name" content="ishigoya"/>
+<meta property="og:title" content="Filling a Workflow Gap with bpython"/>
+<meta property="og:description" content="I felt a bit disingenuous putting this article under the category of &#34;programming&#34;, as it&#39;s more a discussion of workflows used for programming than actual programming itself. However, can I really justify having an entire category for &#34;workflow&#34;? We shall see. This time, I&#39;d like to share my experience with …"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://ishigoya.com/post/filling-a-workflow-gap-with-bpython"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2020-12-29 22:40:14+09:00"/>
+<meta property="article:modified_time" content="2020-12-29 22:41:52+09:00"/>
+<meta property="article:author" content="https://ishigoya.com/author/rob.html">
+<meta property="article:section" content="workflow"/>
+<meta property="og:image" content="">
+
+  <title>ishigoya &ndash; Filling a Workflow Gap with bpython</title>
+
+</head>
+<body class="dark-theme">
+  <aside>
+    <div>
+
+      <h1>
+        <a href="https://ishigoya.com">Rob's Blog</a>
+      </h1>
+
+
+
+      <nav>
+        <ul class="list">
+
+
+              <li>
+                <a target="_self"
+                   href="https://ishigoya.com/about">
+                  About
+                </a>
+              </li>
+
+            <li>
+              <a target="_self" href="/categories" >categories</a>
+            </li>
+        </ul>
+      </nav>
+
+    </div>
+
+  </aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1>Filling a Workflow Gap with bpython</h1>
+    <p>
+      Posted in December 2020 to <a href="https://ishigoya.com/category/workflow">workflow</a>
+    </p>
+  </header>
+
+
+  <div>
+    <p>I felt a bit disingenuous putting this article under the category of "programming", as it's more a discussion of workflows used for programming than actual programming itself. However, can I really justify having an entire category for "workflow"? We shall see.</p>
+<p>This time, I'd like to share my experience with <a href="https://github.com/bpython/bpython">bpython</a>, an alternative Python interpreter. I first installed bpython a few months ago, but only started playing around with it today. Up until now, I've only used the standard Python interpreter. While I haven't had any particular problems with it, I've felt like there was a gap in how I worked. As far as I'm aware, there isn't an easy way to edit your session history, or to save the output to a file. As a result, I've only used the Python interpreter to do simple checks of one-line commands. Anything that involves writing a function feels like too much hassle, because I can't edit the history afterwards if I make a mistake, or save it to a file. While it's also possible to do work in vim, I feel as though this lacks the immediacy of using an interpreter.</p>
+<p>My other recent go-to has been Jupyter. Being able to whip up graphics quickly and in the same window is a big plus, as is being able to re-run your code after editing it. However, this too is something that I probably wouldn't use if I just need a quick solution to something.</p>
+<p>This time, I turned to bpython to help me solve this problem:</p>
+<blockquote>
+<p>A lot of <em>n</em> items contains <em>k</em> defectives, and <em>m</em> are selected randomly and inspected. How should the value of <em>m</em> be chosen so that the probability that at least one defective item turns up is .90?</p>
+<p><em>Mathematical Statistics and Data Analysis, Rice, 3Ed</em></p>
+</blockquote>
+<p>I wanted to write a simple function to solve this, but at the same time, I recognised that there might be fiddly bits that I'd have to go back and edit.</p>
+<p>I had a tentative go at writing the function line-by-line in the bpython interpreter, and as expected, it didn't work first time. But a quick search of the bpython docs revealed its hidden weapon: press <strong>F7</strong> and you can edit your session history! I fixed the issue with the program and then ran it again (and repeated a few times until it worked properly), and this was the final result:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">### current bpython session - make changes and save to reevaluate session.</span>
+<span class="c1">### lines beginning with ### will be ignored.</span>
+<span class="c1">### To return to bpython without reevaluating make no changes to this file</span>
+<span class="c1">### or save an empty file.</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">comb</span>
+
+
+<span class="k">def</span> <span class="nf">check_count</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Return the number of tests necessary to find one or more of k defective </span>
+<span class="sd">       items in a lot of size n with probability Q.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">poss_m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">poss_m</span> <span class="o">&gt;=</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">total</span> <span class="o">+=</span> <span class="n">comb</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">comb</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="n">k</span><span class="p">,</span> <span class="n">poss_m</span><span class="o">-</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">total</span> <span class="o">+=</span> <span class="n">comb</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="p">:</span><span class="o">=</span> <span class="n">total</span> <span class="o">/</span> <span class="n">comb</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">poss_m</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">out</span> <span class="o">&gt;</span> <span class="n">Q</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">poss_m</span>
+
+<span class="n">check_count</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="c1"># OUT: 205</span>
+<span class="n">check_count</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="c1"># OUT: 227</span>
+<span class="c1">### </span>
+</code></pre></div>
+
+<p>One of the other cool things is that bpython will show the docstring of a program while you're typing. Here, it's showing the docstring for the program I just wrote:</p>
+<div class="highlight"><pre><span></span><code><span class="err">&gt;&gt;&gt; check_count(</span>
+<span class="err">┌───────────────────────────────────────────────────────────────────────────┐</span>
+<span class="err">│ check_count: (Q, n, k)                                                    │</span>
+<span class="err">│ Return the number of tests necessary to find one or more of k defective   │</span>
+<span class="err">│ items in a lot of size n with probability Q.                              │</span>
+<span class="err">└───────────────────────────────────────────────────────────────────────────┘</span>
+</code></pre></div>
+
+<p>Another interesting thing is the <strong>F8</strong> shortcut, which uploads the session history to a pastebin so you can share it online. Now I've finally gotten started with bpython, I'm excited to explore some of its other features!</p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+    </p>
+  </div>
+
+
+
+
+
+</article>
+
+    <footer>
+<p>
+Except where otherwise noted, content on this site is licensed under a <a href=https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0 license</a>.<br /> Built with <a href="http://getpelican.com" target="_blank">Pelican</a>. Theme based on <a href="http://bit.ly/flex-pelican" target="_blank">Flex</a>.
+</p>    </footer>
+  </main>
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " ishigoya ",
+  "url" : "https://ishigoya.com",
+  "image": "",
+  "description": ""
+}
+</script>
+
+
+</body>
+</html>
